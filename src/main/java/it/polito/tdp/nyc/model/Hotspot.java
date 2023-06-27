@@ -44,6 +44,16 @@ public class Hotspot {
 		this.postcode = postcode;
 	}
 	
+	
+	
+
+	@Override
+	public String toString() {
+		return  borough;
+	}
+
+
+
 
 	public Integer getObjectId() {
 		return objectId;

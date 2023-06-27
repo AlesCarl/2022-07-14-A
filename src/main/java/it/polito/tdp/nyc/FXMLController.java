@@ -1,7 +1,13 @@
 package it.polito.tdp.nyc;
 
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.nyc.db.NYCDao;
+import it.polito.tdp.nyc.model.Arco;
+import it.polito.tdp.nyc.model.Hotspot;
 import it.polito.tdp.nyc.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,6 +21,7 @@ import javafx.scene.control.TextField;
 public class FXMLController {
 
 	Model model;
+	NYCDao dao =new NYCDao() ; 
 	
     @FXML // ResourceBundle that was given to the FXMLLoader
     private ResourceBundle resources;
@@ -41,7 +48,7 @@ public class FXMLController {
     private TableColumn<?, ?> clV2; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbBorough"
-    private ComboBox<?> cmbBorough; // Value injected by FXMLLoader
+    private ComboBox<Hotspot> cmbBorough; // Value injected by FXMLLoader
 
     @FXML // fx:id="tblArchi"
     private TableView<?> tblArchi; // Value injected by FXMLLoader
@@ -55,20 +62,52 @@ public class FXMLController {
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
 
+    
+    
+    
     @FXML
     void doAnalisiArchi(ActionEvent event) {
     	
+    	txtResult.appendText ("\nLa media degli archi è : " +model.getMedia()+" \n");
+    	
+    	List<Arco> archi = model.analisiArchi () ;
+    	
+    	for (Arco a: archi) {
+    	txtResult.appendText (a+" \n");
+    	}
 
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	
+    	Hotspot h= this.cmbBorough.getValue();
+    	
+    	if (h==null) {
+    		txtResult.appendText ("Seleziona una voce \n");
+    		return;
+    	}
+    	this.model.creaGrafo(h);
+    	this.txtResult.appendText("VERTICI TOTALI: "+ model.getVertici() );
+    	this.txtResult.appendText("\nARCHI TOTALI: "+ model.getNumEdges() );
+    	
+    	
     }
 
     @FXML
     void doSimula(ActionEvent event) {
+    	
+    	double probabilita= Double.parseDouble(txtProb.getText());
+    	int durata= Integer.parseInt(this.txtDurata.getText());
+    	
+    	//mancano try catch e controlli vari ... 
+    	
+    	 Map<String, Integer> condivisioni = model.simula(probabilita, durata);;
+    	 
 
+    	 for(String s: condivisioni.keySet()) {
+    		 this.txtResult.appendText(s+" "+condivisioni.get(s)+"\n");
+    	 }
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -90,6 +129,15 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	this.setBorghi();
+    }
+    public void setBorghi() { 
+    	
+    	for(Hotspot h: dao.getAllHotspot()) {
+    	     this.cmbBorough.getItems().add(h); 
+    	}
+    	
+    	
     }
 
 }
