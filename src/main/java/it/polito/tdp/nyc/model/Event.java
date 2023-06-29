@@ -8,7 +8,7 @@ public class Event implements Comparable<Event> {
 	}
 	
 	private EventType type ;
-	private int time;
+	private int time; // conto dei giorni ... 
     private String NTA; 	
     private int durata; //durata residua
     
@@ -21,9 +21,6 @@ public class Event implements Comparable<Event> {
 		this.NTA = nTA;
 		this.durata = durata;
 	}
-
-
-
 
 
 

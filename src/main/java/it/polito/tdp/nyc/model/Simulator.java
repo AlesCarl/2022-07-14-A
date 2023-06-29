@@ -27,11 +27,12 @@ public class Simulator {
     //Stato del sistema:
 	private SimpleWeightedGraph<String, DefaultWeightedEdge> graph;
 	private Map <String,Integer> numShare;  //tiene conto degli share in real time
-
+	
+    // se il value = 1 sta condividendo, altrimenti no.
  
 	
 	//paramentri di OUTPUT: 
-	private Map <String,Integer> idMapTotShare;  //tiene conto degli share
+	private Map <String,Integer> idMapTotShare;  //tiene conto degli share totali
 
 
 	//coda eventi
@@ -45,15 +46,15 @@ public class Simulator {
 		
 	
 	
+	
+	
 	//COSTRUTTORE: 
 	public Simulator (SimpleWeightedGraph<String, DefaultWeightedEdge> graph, double probabilita, int durata) {
 		
 		this.graph= graph;
 		this.probabilita=probabilita;
 		this.durata=durata; 
-		
 	
-		
 	}
 
 	
@@ -63,9 +64,6 @@ public class Simulator {
 		
 		this.numShare= new HashMap<String,Integer>(); 
 		this.idMapTotShare= new HashMap<String,Integer>(); 
-
-		this.listVertici= new ArrayList<>(graph.vertexSet()); 
-
 		
 		for(String c: this.graph.vertexSet()) {
 			this.numShare.put(c, 0);
@@ -98,7 +96,6 @@ public class Simulator {
 		 
 		 int n = (int) (Math.random() * this.listVertici.size());
 		 return listVertici.get(n);
-
 	}
 	
 	
@@ -112,9 +109,9 @@ public class Simulator {
 			Event e= this.queue.poll();
 			
 			
+			//condizione di uscita:
 			if(e.getTime()>=100)
 				break; 
-			
 			
 			// le  3 variabili dell'evento:
 			int time= e.getTime();
@@ -140,18 +137,16 @@ public class Simulator {
 				 
 				 
 				 // RICONDIVISIONE: 
-				 if(durata/2 !=0) { // arrotondata 
+				 if(durata/2 !=0) { // arrotondo
 				 String NtaNuovo= trovaNta(NTA); 
 				 
 				 if(NtaNuovo!= null) {
-					 // ricondivido su questo nuovo 
+					 //ricondivido su questo nuovo 
 					 this.queue.add(new Event (EventType.SHARE, time+1, NtaNuovo,durata/2 ));
 				   }
 				 }
 
 			 break;
-			 
-			 
 			 
 			 
 			/** 2o CASO:  **/  
@@ -161,9 +156,6 @@ public class Simulator {
 			 this.numShare.put(NTA, this.numShare.get(NTA)-1);
 			 break; 
 			}
-			
-			
-			
 			
 	
       }
